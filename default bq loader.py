@@ -25,6 +25,14 @@ table_id = 'your_table_id'
 dataset_ref = client.dataset(dataset_id)
 table_ref = dataset_ref.table(table_id)
 
+# Define the schema for the table
+schema = [
+    bigquery.SchemaField('column_1', 'STRING', mode='REQUIRED'),
+    bigquery.SchemaField('column_2', 'INTEGER', mode='REQUIRED'),
+    bigquery.SchemaField('column_3', 'FLOAT', mode='NULLABLE'),
+    bigquery.SchemaField('column_4', 'TIMESTAMP', mode='NULLABLE')
+]
+
 # Load the CSV file
 with open('your_csv_file.csv', 'rb') as f:
     reader = csv.reader(f)
@@ -34,8 +42,8 @@ with open('your_csv_file.csv', 'rb') as f:
 # Convert the rows to BigQuery insert data format
 data = [{header[i]:row[i] for i in range(len(header))} for row in rows]
 
-# Upload the data to BigQuery
-errors = client.insert_rows(table_ref, data)
+# Upload the data to BigQuery with the specified schema
+errors = client.insert_rows(table_ref, data, schema=schema)
 if not errors:
     print('Data loaded to BigQuery successfully!')
 else:
